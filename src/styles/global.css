@@ -186,7 +186,10 @@ body::after {
   .sentinel-grid { grid-template-columns: 1fr; }
 }
 
-/* ========== Header hamburger fix ========== */
+/* ========== Header hamburger fix ==========
+   Classes wired up in Task 13 (Header.jsx): className="header-hamburger/nav/clock"
+   These selectors are intentionally forward-only placeholders.
+   ========================================== */
 @media (max-width: 768px) {
   .header-hamburger { display: flex !important; }
   .header-nav        { display: none !important; }
