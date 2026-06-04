@@ -32,6 +32,12 @@
   --radius: 12px;
   --radius-sm: 6px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --accent-orange: #ff6600;
+  --status-go:      #00ff88;
+  --status-caution: #ffaa00;
+  --status-hold:    #ff6600;
+  --status-scrub:   #ff3366;
 }
 
 /* ========== Reset & Base ========== */
@@ -165,3 +171,48 @@ body::after {
 .animate-float { animation: float 4s ease-in-out infinite; }
 .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 .animate-spin-slow { animation: spin-slow 12s linear infinite; }
+
+/* ========== Sentinel Hub Grid ========== */
+.sentinel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+@media (max-width: 1200px) {
+  .sentinel-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .sentinel-grid { grid-template-columns: 1fr; }
+}
+
+/* ========== Header hamburger fix ========== */
+@media (max-width: 768px) {
+  .header-hamburger { display: flex !important; }
+  .header-nav        { display: none !important; }
+  .header-clock      { display: none !important; }
+}
+
+/* ========== Modal overlay ========== */
+.module-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 4, 8, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fade-in-up 0.2s ease;
+}
+.module-modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
