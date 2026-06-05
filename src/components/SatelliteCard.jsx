@@ -1,5 +1,5 @@
 // src/components/SatelliteCard.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Satellite } from 'lucide-react';
 import SpaceCard from './SpaceCard';
 import ModuleModal from './ModuleModal';
@@ -37,11 +37,13 @@ function GaugeMini({ value, color, label }) {
 export default function SatelliteCard({ onStatusChange }) {
   const [data, setData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const onStatusChangeRef = useRef(onStatusChange);
+  onStatusChangeRef.current = onStatusChange;
 
   useEffect(() => {
     return subscribe(d => {
       setData(d);
-      onStatusChange?.({ health: d.health, normal: d.normal, alerta: d.alerta, falha: d.falha });
+      onStatusChangeRef.current?.({ health: d.health, normal: d.normal, alerta: d.alerta, falha: d.falha });
     });
   }, []);
 

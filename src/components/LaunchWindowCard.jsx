@@ -1,5 +1,5 @@
 // src/components/LaunchWindowCard.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Rocket } from 'lucide-react';
 import SpaceCard from './SpaceCard';
 import ModuleModal from './ModuleModal';
@@ -40,13 +40,17 @@ export default function LaunchWindowCard({ onStatusChange }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const onStatusChangeRef = useRef(onStatusChange);
+  onStatusChangeRef.current = onStatusChange;
 
   useEffect(() => {
-    fetchLaunchWindowData().then(d => {
-      setData(d);
-      setLoading(false);
-      onStatusChange?.({ status: d.status, kp: d.kpCurrent });
-    });
+    fetchLaunchWindowData()
+      .then(d => {
+        setData(d);
+        setLoading(false);
+        onStatusChangeRef.current?.({ status: d.status, kp: d.kpCurrent });
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const status = data?.status ?? 'GO';

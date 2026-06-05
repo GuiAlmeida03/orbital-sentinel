@@ -41,7 +41,7 @@ function BarChart({ jobs, currentEnergy }) {
             <rect x={x} y={y} width={bw} height={bh} fill={color + '40'} stroke={color} strokeWidth="1" rx="3" />
             <text x={x + bw / 2} y={y - 4} textAnchor="middle" fill={color}
               style={{ fontFamily: 'var(--font-mono)', fontSize: '7px' }}>{formatPj(bar.energy)}</text>
-            {bar.accuracy && (
+            {bar.accuracy != null && (
               <text x={x + bw / 2} y={y - 13} textAnchor="middle" fill="rgba(255,255,255,0.5)"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: '7px' }}>{bar.accuracy}%</text>
             )}
@@ -112,6 +112,7 @@ export default function EnergyAnalyzer({ onStatusChange }) {
                   <span style={{ color: 'var(--accent-cyan)' }}>{value}</span>
                 </div>
                 <input type="range" min={min} max={max} step={step} value={value}
+                  aria-label={label}
                   onChange={e => setter(Number(e.target.value))}
                   style={{ width: '100%', accentColor: 'var(--accent-cyan)', cursor: 'pointer' }}
                 />

@@ -80,7 +80,7 @@ export default function FireRiskMap({ onStatusChange }) {
       (BIOMES.filter(b => risks[b.id] >= 60).length / BIOMES.length) * 100
     );
     onStatusChange?.({ highRiskPercent: highRiskPct });
-  }, [risks]);
+  }, [risks, onStatusChange]);
 
   const highRiskCount = BIOMES.filter(b => risks[b.id] >= 60).length;
   const highRiskPct = Math.round((highRiskCount / BIOMES.length) * 100);
@@ -131,7 +131,7 @@ export default function FireRiskMap({ onStatusChange }) {
 
             {hovered && (
               <div style={{
-                position: 'absolute', left: tooltipPos.x + 10, top: tooltipPos.y - 60,
+                position: 'absolute', left: tooltipPos.x + 10, top: Math.max(0, tooltipPos.y - 60),
                 background: 'rgba(6,16,30,0.95)', border: '1px solid var(--border-glow)',
                 borderRadius: 'var(--radius-sm)', padding: '8px 12px',
                 fontFamily: 'var(--font-mono)', fontSize: '11px', pointerEvents: 'none', zIndex: 10,
