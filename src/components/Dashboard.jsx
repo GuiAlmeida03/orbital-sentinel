@@ -143,7 +143,10 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-              <p style={styles.dataSource}>NASA NeoWs · Próximos 3 dias</p>
+              <p style={styles.dataSource}>
+                NASA NeoWs · Próximos 3 dias
+                {asteroids.isFallback && <span style={{ color: 'var(--accent-amber)', marginLeft: '6px' }}>· SIMULADO</span>}
+              </p>
             </div>
           ) : null}
         </SpaceCard>
@@ -196,8 +199,6 @@ export default function Dashboard() {
         <SpaceCard title="Astronomia do Dia" icon={Telescope} accentColor="var(--accent-cyan)" delay={300} badge="NASA APOD">
           {loadingApod ? (
             <Loading message="Carregando imagem da NASA..." />
-          ) : errorApod ? (
-            <p style={{ color: 'var(--accent-red)', fontSize: '13px' }}>⚠ {errorApod}</p>
           ) : apod ? (
             <div>
               {/* Renderização condicional: imagem ou vídeo */}
@@ -220,6 +221,11 @@ export default function Dashboard() {
               <p style={styles.apodExplanation}>
                 {apod.explanation?.slice(0, 220)}...
               </p>
+              {apod._fallback && (
+                <p style={{ fontSize: '10px', color: 'var(--accent-amber)', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>
+                  ⚠ NASA API indisponível — exibindo dados simulados
+                </p>
+              )}
               <a
                 href={apod.hdurl || apod.url}
                 target="_blank"
