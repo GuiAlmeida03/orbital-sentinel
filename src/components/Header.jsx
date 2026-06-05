@@ -15,7 +15,8 @@ export default function Header({ activeSection, onNavigate }) {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'monitor', label: 'Monitor' },
+    { id: 'sentinel',  label: 'Sentinel' },
+    { id: 'monitor',   label: 'Monitor' },
     { id: 'assistant', label: 'Astra AI' },
   ];
 
@@ -44,7 +45,7 @@ export default function Header({ activeSection, onNavigate }) {
         </div>
 
         {/* Nav desktop */}
-        <nav style={styles.nav}>
+        <nav style={styles.nav} className="header-nav">
           {navItems.map((item) => (
             <button
               key={item.id}
@@ -66,13 +67,12 @@ export default function Header({ activeSection, onNavigate }) {
             <Activity size={12} color="var(--accent-green)" />
             <span style={{ color: 'var(--accent-green)', fontSize: '11px' }}>ONLINE</span>
           </div>
-          <div style={styles.clock}>
+          <div style={styles.clock} className="header-clock">
             <div style={styles.clockTime}>{formatTime(time)}</div>
             <div style={styles.clockDate}>{formatDate(time)}</div>
           </div>
           {/* Hamburguer mobile */}
-          <button
-            style={styles.hamburger}
+          <button style={{ ...styles.hamburger, display: 'none' }} className="header-hamburger"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Menu"
           >

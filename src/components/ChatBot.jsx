@@ -5,6 +5,27 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Bot, User, Sparkles, RefreshCw, ChevronRight } from 'lucide-react';
 
+const API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY ?? '';
+
+function buildSystemPrompt(ctx) {
+  const base = `Você é Astra, assistente de IA especializada em astronomia, missões espaciais, economia espacial, tecnologia aeroespacial e ciências planetárias. Você faz parte do Orbital Sentinel, um centro inteligente de monitoramento espacial.
+
+Responda SEMPRE em português brasileiro. Seja concisa, informativa e use linguagem científica acessível. Use ** ** para destacar termos importantes. Limite suas respostas a no máximo 3 parágrafos. Se não souber algo, admita honestamente.`;
+
+  if (!ctx) return base;
+
+  const { iot, sat, launch, fire } = ctx;
+  return `${base}
+
+Status atual dos sistemas do Orbital Sentinel:
+- IoT Espaço Sentinela: ${iot?.status ?? 'desconhecido'} (temp=${iot?.temp?.toFixed(1) ?? '–'}°C, umidade=${iot?.umidade?.toFixed(1) ?? '–'}%)
+- Satélites monitorados: ${sat?.normal ?? 0} normais, ${sat?.alerta ?? 0} em alerta, ${sat?.falha ?? 0} falha iminente (saúde geral: ${sat?.health ?? 0}%)
+- Clima espacial: ${launch?.status ?? 'desconhecido'} (Kp=${launch?.kp?.toFixed(1) ?? '–'})
+- Risco de incêndio: ${fire?.highRiskPercent ?? 0}% do território monitorado em risco elevado
+
+Use esses dados para contextualizar suas respostas quando relevante.`;
+}
+
 // Perguntas sugeridas para o usuário
 const SUGGESTED = [
   'Há risco de asteroides hoje?',
@@ -89,7 +110,7 @@ function TypingIndicator() {
   );
 }
 
-export default function ChatBot() {
+export default function ChatBot({ sentinelContext }) {
   const [messages, setMessages] = useState([WELCOME]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -118,15 +139,16 @@ export default function ChatBot() {
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 1000,
-          system: `Você é Astra, uma assistente de IA especializada em astronomia, missões espaciais, economia espacial, tecnologia aeroespacial e ciências planetárias. Você faz parte do sistema OrbitalMind AI, um centro inteligente de monitoramento espacial.
-
-Responda SEMPRE em português brasileiro. Seja concisa, informativa e use linguagem científica acessível. Use ** ** para destacar termos importantes. Limite suas respostas a no máximo 3 parágrafos. Se não souber algo, admita honestamente.
-
-Contexto do sistema: monitora asteroides via NASA NeoWs, exibe APOD da NASA, acompanha missões como Artemis, Mars Rover 2026, Europa Clipper, e monitora clima espacial em tempo real.`,
+          system: buildSystemPrompt(sentinelContext),
           messages: [
             ...history,
             { role: 'user', content: userMsg },
