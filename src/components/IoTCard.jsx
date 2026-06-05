@@ -1,5 +1,5 @@
 // src/components/IoTCard.jsx
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Cpu } from 'lucide-react';
 import SpaceCard from './SpaceCard';
 import ModuleModal from './ModuleModal';
@@ -39,11 +39,13 @@ function Sparkline({ data, color, height = 40 }) {
 export default function IoTCard({ onStatusChange }) {
   const [data, setData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const onStatusChangeRef = useRef(onStatusChange);
+  onStatusChangeRef.current = onStatusChange;
 
   useEffect(() => {
     return subscribe(d => {
       setData(d);
-      onStatusChange?.({ status: d.status, temp: d.reading.temperatura, umidade: d.reading.umidade });
+      onStatusChangeRef.current?.({ status: d.status, temp: d.reading.temperatura, umidade: d.reading.umidade });
     });
   }, []);
 
@@ -85,7 +87,7 @@ export default function IoTCard({ onStatusChange }) {
 
           <div>
             <div style={{ fontSize: '9px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '2px' }}>TEMPERATURA (últimas 20)</div>
-            <Sparkline data={data?.history.map(h => h.temperatura)} color="var(--accent-amber)" />
+            <Sparkline data={data?.history?.map(h => h.temperatura)} color="var(--accent-amber)" />
           </div>
 
           <button
@@ -131,7 +133,7 @@ export default function IoTCard({ onStatusChange }) {
           )}
           <div>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginBottom: '6px' }}>VIBRAÇÃO (últimas 20 leituras)</div>
-            <Sparkline data={data?.history.map(h => h.vibracao)} color="var(--accent-purple)" height={60} />
+            <Sparkline data={data?.history?.map(h => h.vibracao)} color="var(--accent-purple)" height={60} />
           </div>
         </div>
       </ModuleModal>

@@ -19,9 +19,11 @@ function classifySatellite(reading, baseline) {
   const dT  = Math.abs(reading.temp_painel - baseline.temp_painel);
   const v   = reading.voltagem;
   const rad = reading.radiacao;
+  // Cryogenic satellites (|baseline| > 100°C) use a proportionally tighter sigma-based threshold
+  const tempScale = Math.abs(baseline.temp_painel) > 100 ? 0.5 : 1;
 
-  if (v < 24 || rad > 45 || dT > 25) return 'Falha Iminente';
-  if (v < 26 || rad > 30 || dT > 15) return 'Alerta';
+  if (v < 24 || rad > 45 || dT > 25 * tempScale) return 'Falha Iminente';
+  if (v < 26 || rad > 30 || dT > 15 * tempScale) return 'Alerta';
   return 'Normal';
 }
 
