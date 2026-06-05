@@ -1,11 +1,11 @@
 // components/ChatBot.jsx
-// Assistente de IA "Astra" — integrado com Claude via Anthropic API
+// Assistente de IA "Astra" — integrado com Groq API (LLaMA 3.3 70B, tier gratuito)
 // Demonstra: useState, useEffect, eventos, renderização condicional, listas
 
 import { useState, useEffect, useRef } from 'react';
 import { Send, Bot, User, Sparkles, RefreshCw, ChevronRight } from 'lucide-react';
 
-const API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY ?? '';
+const API_KEY = import.meta.env.VITE_GROQ_API_KEY ?? '';
 
 function buildSystemPrompt(ctx) {
   const base = `Você é Astra, assistente de IA especializada em astronomia, missões espaciais, economia espacial, tecnologia aeroespacial e ciências planetárias. Você faz parte do Orbital Sentinel, um centro inteligente de monitoramento espacial.
@@ -137,19 +137,17 @@ export default function ChatBot({ sentinelContext }) {
         .slice(1) // remove mensagem de boas-vindas local
         .map(m => ({ role: m.role, content: m.content }));
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
+          'Authorization': `Bearer ${API_KEY}`,
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: 'llama-3.3-70b-versatile',
           max_tokens: 1000,
-          system: buildSystemPrompt(sentinelContext),
           messages: [
+            { role: 'system', content: buildSystemPrompt(sentinelContext) },
             ...history,
             { role: 'user', content: userMsg },
           ],
@@ -157,7 +155,7 @@ export default function ChatBot({ sentinelContext }) {
       });
 
       const data = await response.json();
-      const replyText = data.content?.map(b => b.text || '').join('') || 'Não consegui processar sua pergunta. Tente novamente.';
+      const replyText = data.choices?.[0]?.message?.content || 'Não consegui processar sua pergunta. Tente novamente.';
 
       setMessages(prev => [...prev, {
         role: 'assistant',
