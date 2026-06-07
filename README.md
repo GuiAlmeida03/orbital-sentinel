@@ -1,219 +1,180 @@
-# 🚀 OrbitalMind AI
+# 🛰️ Orbital Sentinel
 
-> Centro Inteligente de Monitoramento Espacial com IA Generativa
+> Plataforma integrada de monitoramento espacial — Global Solution FIAP 2026
 
-**Projeto acadêmico — FIAP | Disciplina: Inteligência Artificial**
-
----
-
-## 📸 Visão Geral
-
-OrbitalMind AI é uma plataforma web futurista que simula um centro de monitoramento espacial inteligente. O sistema integra dados reais da NASA, visualiza telemetria orbital em tempo real e conta com **Astra**, um assistente de IA generativa alimentado pelo modelo Claude da Anthropic.
+**🌐 Deploy:** [guialmeida03.github.io/orbital-sentinel](https://guialmeida03.github.io/orbital-sentinel/)
 
 ---
 
-## 🛠 Tecnologias Utilizadas
+## 📌 Sobre o Projeto
 
-| Tecnologia | Finalidade |
+O **Orbital Sentinel** é um centro de controle espacial unificado que integra 8 módulos de disciplinas distintas da Global Solution FIAP numa única plataforma web. O sistema resolve um problema real: decisões críticas de operações espaciais dependem de dados espalhados em múltiplos sistemas sem visão integrada.
+
+### O problema que resolve
+
+Um lançamento espacial requer monitoramento simultâneo de sensores físicos do pad (IoT), clima espacial (RPA), saúde dos satélites em órbita (QML), risco ambiental na área (Visão Computacional) e acesso a conhecimento técnico (RAG). Sem integração, esses dados ficam fragmentados entre equipes e sistemas diferentes.
+
+O Orbital Sentinel centraliza tudo em tempo real numa interface única.
+
+---
+
+## 🗂️ Módulos e Disciplinas
+
+| Card | Disciplina | O que faz |
+|---|---|---|
+| **IoT Espaço Sentinela** | IoT | 7 sensores ESP32 simulados (temp, umidade, pressão, vibração, gás, radiação, distância) classificados em GO/CAUTION/HOLD/SCRUB em tempo real |
+| **Space RAG** | Cognitive Computing | Chat com LLaMA 3.3 70B especializado em 5 domínios: NASA Artemis, ESA Copernicus, INPE Queimadas, Starlink, EMBRAPA Geo |
+| **Telemetria de Satélites** | QML / Machine Learning | Classificador SVM de telemetria de 5 satélites reais (ISS, Hubble, Webb, Starlink-42, GPS-IIF) em Normal / Alerta / Falha Iminente |
+| **Mapa de Risco de Incêndio** | Visão Computacional | Mapa SVG do Brasil com 6 biomas coloridos por nível de risco, baseado nos resultados do EfficientNetB0 (AUC-ROC 0.9987) |
+| **NLP Fine-Tuning** | NLP | Chat sobre certificações LEED/AQUA-HQE simulando o Llama 3.2 3B fine-tuned com QLoRA (BLEU-4 +212%) |
+| **Launch Window** | RPA | Dados reais da NOAA SWPC (índice Kp geomagnético) + Launch Library 2 para classificar janelas de lançamento |
+| **Energy Analyzer** | CLUSTER | Calculadora interativa da fórmula SpaceTrain Energy com comparativo dos Jobs A/B/C (trade-off acurácia × energia) |
+| **Asteroides Próximos** | Front-End | Integração real com NASA NeoWs — objetos próximos da Terra nos próximos 3 dias |
+| **Astronomia do Dia** | Front-End | Integração real com NASA APOD — imagem e descrição astronômica diária |
+
+---
+
+## 🛠️ Tecnologias
+
+| Tecnologia | Uso |
 |---|---|
-| **React 18** | Framework UI com Hooks e Componentes Funcionais |
-| **Vite** | Build tool e dev server ultrarrápido |
-| **JavaScript (ES2022+)** | Linguagem principal |
-| **CSS puro** com variáveis | Estilização com design system customizado |
-| **Fetch API** | Consumo de APIs externas |
-| **NASA API** | Dados astronômicos reais (APOD + NeoWs) |
-| **Anthropic Claude API** | IA Generativa para o assistente Astra |
-| **Lucide React** | Ícones modernos |
-
----
-
-## ✅ Requisitos FIAP Demonstrados
-
-| Requisito | Implementado em |
-|---|---|
-| `useState` | Todos os componentes (mensagens, seção ativa, dados NASA) |
-| `useEffect` | Dashboard (fetch NASA), Monitor (intervalo de telemetria), Header (relógio) |
-| Props | Header recebe `activeSection` e `onNavigate`; SpaceCard recebe múltiplas props |
-| Eventos | `onClick`, `onKeyDown`, `onChange`, `onMouseEnter/Leave` |
-| Renderização Condicional | Loading states, erros, seções da app, tipo de mídia APOD |
-| Renderização de Listas | Alertas, satélites, missões, sugestões do chat |
-| Componentização | Header, Dashboard, Monitor, ChatBot, SpaceCard, Loading, Footer |
-| Consumo de API | NASA APOD, NASA NeoWs, Anthropic Claude |
-| Interface Responsiva | Grid responsivo, menu mobile hamburger |
-| IA Generativa | Assistente Astra via API Claude (real, não simulada) |
+| **React 18** | UI com Hooks funcionais (useState, useEffect, useCallback, useMemo, useRef) |
+| **Vite 5** | Build tool e dev server |
+| **JavaScript ES2022+** | Linguagem principal |
+| **CSS puro** | Design system com variáveis CSS, sem frameworks externos |
+| **SVG puro** | Todos os gráficos (sparklines, gauges, mapas, barras) |
+| **Groq API** | LLaMA 3.3 70B para os chats RAG e NLP (tier gratuito) |
+| **NASA API** | APOD + NeoWs (dados reais com fallback simulado) |
+| **NOAA SWPC API** | Índice Kp geomagnético em tempo real |
+| **Launch Library 2** | Próximos lançamentos espaciais reais |
+| **Lucide React** | Ícones |
+| **GitHub Actions** | CI/CD — deploy automático a cada push |
 
 ---
 
 ## 📁 Estrutura do Projeto
 
 ```
-orbitalmind/
-├── index.html
-├── vite.config.js
-├── package.json
-├── README.md
-└── src/
-    ├── main.jsx              # Ponto de entrada
-    ├── App.jsx               # Componente raiz + navegação
-    ├── components/
-    │   ├── Header.jsx        # Barra de navegação + relógio
-    │   ├── Dashboard.jsx     # Dashboard principal (NASA APIs)
-    │   ├── Monitor.jsx       # Telemetria + gráficos em tempo real
-    │   ├── ChatBot.jsx       # Assistente Astra AI
-    │   ├── SpaceCard.jsx     # Card reutilizável glassmorphism
-    │   ├── Loading.jsx       # Indicadores de carregamento
-    │   └── Footer.jsx        # Rodapé
-    ├── services/
-    │   └── nasaApi.js        # Integração NASA API
-    └── styles/
-        └── global.css        # Variáveis CSS + animações + base
+src/
+├── App.jsx                    # Componente raiz
+├── components/
+│   ├── SentinelHub.jsx        # Hub principal — grid 3×3 dos 9 cards
+│   ├── IoTCard.jsx            # Módulo IoT
+│   ├── SpaceRAGCard.jsx       # Módulo RAG (chat Groq)
+│   ├── SatelliteCard.jsx      # Módulo QML
+│   ├── FireRiskMap.jsx        # Módulo Visão Computacional
+│   ├── NLPCard.jsx            # Módulo NLP (chat Groq)
+│   ├── LaunchWindowCard.jsx   # Módulo RPA
+│   ├── EnergyAnalyzer.jsx     # Módulo CLUSTER
+│   ├── AsteroidsCard.jsx      # NASA NeoWs
+│   ├── APODCard.jsx           # NASA APOD
+│   ├── MiniChat.jsx           # Componente de chat reutilizável
+│   ├── ModuleModal.jsx        # Modal genérico
+│   ├── SpaceCard.jsx          # Card glassmorphism base
+│   ├── Header.jsx             # Navegação + relógio
+│   ├── Footer.jsx             # Rodapé
+│   └── Loading.jsx            # Indicadores de carregamento
+├── services/
+│   ├── iotService.js          # Simulação IoT (Box-Muller, GO/CAUTION/HOLD/SCRUB)
+│   ├── satelliteService.js    # Telemetria satélites (classificador SVM)
+│   ├── launchWindowService.js # NOAA SWPC + Launch Library 2
+│   └── nasaApi.js             # NASA APOD + NeoWs (com fallback)
+└── styles/
+    └── global.css             # Variáveis CSS, animações, grid responsivo
 ```
 
 ---
 
-## 🚀 Como Instalar e Rodar
+## 🚀 Como Rodar Localmente
 
 ### Pré-requisitos
-- Node.js 18+ instalado
-- npm ou yarn
+- Node.js 20+
+- Chave Groq gratuita: [console.groq.com](https://console.groq.com)
 
-### Passo a Passo
+### Instalação
 
 ```bash
-# 1. Clone ou extraia o projeto
-cd orbitalmind
+# 1. Clone o repositório
+git clone https://github.com/GuiAlmeida03/orbital-sentinel.git
+cd orbital-sentinel
 
-# 2. Instale as dependências
+# 2. Crie o arquivo de variáveis de ambiente
+cp .env.example .env
+# Edite .env e adicione sua chave Groq
+
+# 3. Instale as dependências
 npm install
 
-# 3. Rode em desenvolvimento
+# 4. Rode em desenvolvimento
 npm run dev
-
-# 4. Acesse no navegador
-# http://localhost:5173
+# Acesse: http://localhost:5173
 ```
 
-### Build para produção
+### Variáveis de Ambiente
 
-```bash
-npm run build
-npm run preview  # visualiza o build localmente
+```env
+VITE_GROQ_API_KEY=sua_chave_groq_aqui
 ```
+
+Chave Groq gratuita em: [console.groq.com](https://console.groq.com) → API Keys → Create API Key
+
+> **NASA API:** usa `DEMO_KEY` por padrão (30 req/hora). Para mais requisições, adicione `VITE_NASA_API_KEY=sua_chave` após cadastro gratuito em [api.nasa.gov](https://api.nasa.gov).
 
 ---
 
-## 🌐 Deploy na Vercel
+## 🌐 Deploy
 
-### Opção 1: Via CLI (recomendado)
+O projeto está configurado para deploy automático no **GitHub Pages** via GitHub Actions.
 
-```bash
-# Instale a CLI da Vercel
-npm install -g vercel
+A cada push na branch `master`:
+1. GitHub Actions faz o build com `npm run build`
+2. O resultado é publicado automaticamente
 
-# Faça deploy
-vercel
+**URL:** [guialmeida03.github.io/orbital-sentinel](https://guialmeida03.github.io/orbital-sentinel/)
 
-# Siga as instruções interativas
-# O projeto será detectado automaticamente como Vite
-```
-
-### Opção 2: Via Interface Web
-
-1. Acesse [vercel.com](https://vercel.com) e faça login
-2. Clique em **"New Project"**
-3. Importe o repositório Git (GitHub/GitLab)
-4. Vercel detecta automaticamente o Vite
-5. Clique em **Deploy** ✅
-
-### Configurações automáticas detectadas:
-- **Framework**: Vite
-- **Build Command**: `npm run build`
-- **Output Directory**: `dist`
+Para configurar em seu próprio repositório:
+1. Ajuste `base` em `vite.config.js` com o nome do seu repo
+2. Adicione `VITE_GROQ_API_KEY` em Settings → Secrets → Actions
+3. Ative GitHub Pages com source "GitHub Actions"
 
 ---
 
-## 🔑 APIs Utilizadas
-
-### NASA API (gratuita)
-- **Base URL**: `https://api.nasa.gov`
-- **Chave padrão**: `DEMO_KEY` (30 req/hora)
-- **Chave gratuita**: Cadastre em [api.nasa.gov](https://api.nasa.gov) para 1000 req/hora
-- **Endpoints**: `/planetary/apod` e `/neo/rest/v1/feed`
-
-Para usar sua própria chave, edite `src/services/nasaApi.js`:
-```js
-const NASA_API_KEY = 'SUA_CHAVE_AQUI';
-```
-
-### Anthropic Claude API (para o assistente Astra)
-- A API key é injetada automaticamente pelo ambiente Claude.ai
-- Em produção própria, adicione `anthropic-beta: messages-2023-06-01` e sua API key
-
----
-
-## 🎨 Funcionalidades
-
-### 📊 Dashboard Espacial
-- **Asteroides próximos** via NASA NeoWs (dados reais, 3 dias)
-- **APOD** — Imagem Astronômica do Dia com título e descrição
-- **Temperatura global** com barra de anomalia climática
-- **Clima espacial** — índice solar, campo magnético, raios cósmicos
-- **Alertas do sistema** — renderização de lista dinâmica
-- **Status de satélites** — ISS, Hubble, James Webb e outros
-
-### 📡 Monitor
-- **Telemetria orbital** — gráfico de linhas SVG atualizado a cada 2s
-- **Performance do sistema** — gauges circulares animados
-- **Missões ativas** — Artemis IV, Mars Rover, Europa Clipper
-- **Frequências de comunicação** — canais e intensidade de sinal
-
-### 🤖 Astra AI
-- Chat com IA generativa real (Claude via Anthropic API)
-- Contexto especializado em astronomia e espaço
-- Histórico de conversa mantido durante a sessão
-- Sugestões de perguntas pré-definidas
-- Typing indicator animado
-- Suporte a formatação **bold** nas respostas
-
----
-
-## 🖌 Design System
+## 🎨 Design System
 
 ```css
-/* Paleta principal */
---accent-cyan:   #00f5ff  /* Destaque principal */
---accent-blue:   #0066ff  /* Ações e links */
---accent-purple: #7c3aed  /* IA e elementos secundários */
---accent-green:  #00ff88  /* Status online / ok */
---accent-red:    #ff3366  /* Alertas / perigos */
---accent-amber:  #ffaa00  /* Avisos moderados */
+/* Paleta neon sci-fi */
+--accent-cyan:    #00f5ff   /* Destaque principal */
+--accent-blue:    #0066ff   /* Links e ações */
+--accent-purple:  #7c3aed   /* IA e elementos NLP */
+--accent-green:   #00ff88   /* Status OK / GO */
+--accent-red:     #ff3366   /* Alertas / SCRUB */
+--accent-amber:   #ffaa00   /* Avisos / CAUTION */
+--accent-orange:  #ff6600   /* Risco moderado-alto */
+
+/* Status de lançamento */
+--status-go:      #00ff88
+--status-caution: #ffaa00
+--status-hold:    #ff6600
+--status-scrub:   #ff3366
 
 /* Tipografia */
-Orbitron     → Títulos e displays (sci-fi)
-Rajdhani     → Corpo do texto (legível e futurista)
-Share Tech Mono → Dados técnicos e código
+Orbitron        → Títulos e displays (sci-fi)
+Rajdhani        → Corpo do texto
+Share Tech Mono → Dados técnicos e monospace
 ```
 
----
-
-## 📝 Decisões de Projeto
-
-- **SVG nativo** para gráficos — sem dependência de biblioteca pesada
-- **CSS puro** com variáveis — sem Tailwind, total controle do design
-- **Glassmorphism** via `backdrop-filter: blur()` — efeito moderno
-- **Starfield no body** — atmosfera espacial sem canvas pesado
-- **API real** para Astra — diferencial sobre chatbot simulado
-- **Dados mockados** complementam as APIs quando há limitação de rate
+**Padrões:** Glassmorphism (`backdrop-filter: blur`), starfield via CSS, SVG puro para todos os gráficos, dark mode total.
 
 ---
 
-## 👨‍🎓 Informações Acadêmicas
+## 👥 Equipe
 
-- **Instituição**: FIAP
-- **Disciplina**: Inteligência Artificial
-- **Tema**: Soluções Inteligentes de IA para a Nova Economia Espacial
-- **Tecnologias principais**: ReactJS + Vite + NASA API + Claude AI
+| Nome | RM |
+|---|---|
+| Vitor Adauto Alves Barbosa | 590247 |
+| Guilherme Henrique Costa de Almeida | 559977 |
+| Matheus Barbosa da Silva | 560185 |
 
 ---
 
-*Desenvolvido com 🚀 para a disciplina de Front da FIAP*
+**Instituição:** FIAP · **Ano:** 2026 · **Evento:** Global Solution
