@@ -16,7 +16,6 @@ export default function Header({ activeSection, onNavigate }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'sentinel',  label: 'Sentinel' },
-    { id: 'assistant', label: 'Astra AI' },
   ];
 
   const formatTime = (date) =>

@@ -1,5 +1,4 @@
 // src/components/SentinelHub.jsx
-import { useState, useCallback } from 'react';
 import { Shield } from 'lucide-react';
 import IoTCard from './IoTCard';
 import SpaceRAGCard from './SpaceRAGCard';
@@ -9,31 +8,7 @@ import NLPCard from './NLPCard';
 import LaunchWindowCard from './LaunchWindowCard';
 import EnergyAnalyzer from './EnergyAnalyzer';
 
-export default function SentinelHub({ onContextUpdate }) {
-  const [iotCtx,    setIotCtx]    = useState({ status: 'GO', temp: 22, umidade: 55 });
-  const [satCtx,    setSatCtx]    = useState({ health: 100, normal: 5, alerta: 0, falha: 0 });
-  const [launchCtx, setLaunchCtx] = useState({ status: 'GO', kp: 3.2 });
-  const [fireCtx,   setFireCtx]   = useState({ highRiskPercent: 33 });
-
-  const handleIoT = useCallback(ctx => {
-    setIotCtx(ctx);
-    onContextUpdate?.({ iot: ctx, sat: satCtx, launch: launchCtx, fire: fireCtx });
-  }, [satCtx, launchCtx, fireCtx, onContextUpdate]);
-
-  const handleSat = useCallback(ctx => {
-    setSatCtx(ctx);
-    onContextUpdate?.({ iot: iotCtx, sat: ctx, launch: launchCtx, fire: fireCtx });
-  }, [iotCtx, launchCtx, fireCtx, onContextUpdate]);
-
-  const handleLaunch = useCallback(ctx => {
-    setLaunchCtx(ctx);
-    onContextUpdate?.({ iot: iotCtx, sat: satCtx, launch: ctx, fire: fireCtx });
-  }, [iotCtx, satCtx, fireCtx, onContextUpdate]);
-
-  const handleFire = useCallback(ctx => {
-    setFireCtx(ctx);
-    onContextUpdate?.({ iot: iotCtx, sat: satCtx, launch: launchCtx, fire: ctx });
-  }, [iotCtx, satCtx, launchCtx, onContextUpdate]);
+export default function SentinelHub() {
 
   return (
     <div style={styles.wrap}>
@@ -54,12 +29,12 @@ export default function SentinelHub({ onContextUpdate }) {
       </div>
 
       <div className="sentinel-grid">
-        <IoTCard          onStatusChange={handleIoT} />
+        <IoTCard />
         <SpaceRAGCard />
-        <SatelliteCard    onStatusChange={handleSat} />
-        <FireRiskMap      onStatusChange={handleFire} />
+        <SatelliteCard />
+        <FireRiskMap />
         <NLPCard />
-        <LaunchWindowCard onStatusChange={handleLaunch} />
+        <LaunchWindowCard />
         <EnergyAnalyzer />
       </div>
     </div>
