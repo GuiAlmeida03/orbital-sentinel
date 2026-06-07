@@ -1,105 +1,85 @@
-// src/components/SpaceRAGCard.jsx
-import { useState, useEffect } from 'react';
-import { BookOpen, ExternalLink } from 'lucide-react';
+// src/components/SpaceRAGCard.jsx — chat real via Groq (5 domínios espaciais)
+import { useState } from 'react';
+import { BookOpen } from 'lucide-react';
 import SpaceCard from './SpaceCard';
 import ModuleModal from './ModuleModal';
+import MiniChat from './MiniChat';
 
-const RAG_URL = 'https://space-rag-jkffesh9hebfkgwywcxca9.streamlit.app';
+const SYSTEM_PROMPT = `Você é o Space RAG, assistente de IA especializado em monitoramento espacial e ambiental. Domínios:
+1. NASA Artemis: retorno à Lua, missões Artemis I/II/III, Gateway lunar, SLS e Orion
+2. ESA Copernicus: satélites Sentinel, observação da Terra, monitoramento climático
+3. INPE Queimadas: focos de incêndio no Brasil, DETER, PRODES, dados de satélite
+4. Starlink (SpaceX): constelação de internet, cobertura global, impacto astronômico
+5. EMBRAPA Geoespacial: agricultura de precisão, geotecnologias, agronegócio brasileiro
 
-const SAMPLE_QUESTIONS = [
-  'O que é o programa Artemis da NASA?',
+Responda SEMPRE em português brasileiro. Cite dados reais. Use ** ** para termos importantes. Máximo 3 parágrafos.`;
+
+const SUGGESTIONS = [
+  'O que é o programa Artemis?',
   'Como o Copernicus monitora queimadas?',
-  'Quais satélites Starlink estão ativos?',
+  'Quantos satélites Starlink existem?',
   'Como o INPE detecta desmatamento?',
-  'O que é o satélite EMBRAPA?',
 ];
 
-export default function SpaceRAGCard() {
-  const [online, setOnline] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [iframeError, setIframeError] = useState(false);
+const DOMAINS = [
+  { name: 'NASA Artemis',   color: 'var(--accent-cyan)' },
+  { name: 'ESA Copernicus', color: 'var(--accent-blue)' },
+  { name: 'INPE Queimadas', color: 'var(--accent-red)' },
+  { name: 'Starlink',       color: 'var(--accent-green)' },
+  { name: 'EMBRAPA Geo',    color: 'var(--accent-amber)' },
+];
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 4000);
-    fetch(RAG_URL, { mode: 'no-cors', signal: controller.signal })
-      .then(() => setOnline(true))
-      .catch(() => setOnline(false))
-      .finally(() => clearTimeout(timeout));
-    return () => { controller.abort(); clearTimeout(timeout); };
-  }, []);
+const WELCOME = `Olá! Sou o **Space RAG**, assistente especializado em monitoramento espacial. 🛰️\n\nCubro 5 domínios: NASA Artemis, ESA Copernicus, INPE Queimadas, Starlink e EMBRAPA Geoespacial.\n\nFaça sua pergunta!`;
+
+export default function SpaceRAGCard() {
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <>
-      <SpaceCard title="Space RAG" icon={BookOpen} accentColor="var(--accent-blue)">
+      <SpaceCard title="Space RAG" icon={BookOpen} accentColor="var(--accent-blue)" badge="RAG">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.5px', lineHeight: 1.6 }}>
-              5 domínios · 19 chunks<br/>LLaMA 3.3 70B via Groq
-            </div>
-            <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: '9px', padding: '3px 8px',
-              borderRadius: '99px', letterSpacing: '1px',
-              background: online === null ? 'rgba(255,255,255,0.06)' : online ? 'rgba(0,255,136,0.1)' : 'rgba(255,51,102,0.1)',
-              color: online === null ? 'var(--text-muted)' : online ? 'var(--accent-green)' : 'var(--accent-red)',
-              border: `1px solid ${online === null ? 'transparent' : online ? 'rgba(0,255,136,0.25)' : 'rgba(255,51,102,0.25)'}`,
-            }}>
-              {online === null ? 'VERIFICANDO' : online ? 'ONLINE' : 'OFFLINE'}
-            </span>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', lineHeight: 1.6 }}>
+            5 domínios · LLaMA 3.3 70B · Groq
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {['NASA Artemis', 'ESA Copernicus', 'INPE Queimadas', 'Starlink', 'EMBRAPA Geo'].map(domain => (
-              <div key={domain} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-blue)', display: 'inline-block', flexShrink: 0 }} />
-                {domain}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            {DOMAINS.map(d => (
+              <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: d.color, display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ color: 'var(--text-secondary)' }}>{d.name}</span>
               </div>
             ))}
           </div>
-
-          <button
-            style={{
-              marginTop: '4px', background: 'rgba(0,102,255,0.05)', border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-sm)', padding: '6px 12px', color: 'var(--accent-blue)',
-              fontFamily: 'var(--font-mono)', fontSize: '10px', cursor: 'pointer', letterSpacing: '1px',
-            }}
-            onClick={() => setModalOpen(true)}
-          >
+          <button onClick={() => setModalOpen(true)} style={{
+            marginTop: '4px', background: 'rgba(0,102,255,0.08)', border: '1px solid rgba(0,102,255,0.25)',
+            borderRadius: 'var(--radius-sm)', padding: '7px 12px', color: 'var(--accent-blue)',
+            fontFamily: 'var(--font-mono)', fontSize: '10px', cursor: 'pointer', letterSpacing: '1px',
+          }}>
             ABRIR ASSISTENTE
           </button>
         </div>
       </SpaceCard>
 
       <ModuleModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Space RAG — Assistente de IA Espacial">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {!iframeError ? (
-            <iframe
-              src={RAG_URL}
-              style={{ width: '100%', height: '500px', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', background: '#0a0a0a' }}
-              title="Space RAG"
-              onError={() => setIframeError(true)}
-            />
-          ) : (
-            <div style={{ textAlign: 'center', padding: '32px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-              <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', lineHeight: 1.8 }}>
-                O app Streamlit não pode ser embutido aqui (X-Frame-Options).<br/>
-                Acesse diretamente:
-              </div>
-              <a href={RAG_URL} target="_blank" rel="noopener noreferrer"
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)', fontSize: '12px', textDecoration: 'none' }}>
-                <ExternalLink size={14} /> Abrir Space RAG
-              </a>
-              <div style={{ width: '100%', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', textAlign: 'left' }}>
-                <div style={{ fontSize: '11px', color: 'var(--accent-cyan)', fontFamily: 'var(--font-display)', letterSpacing: '1px', marginBottom: '10px' }}>PERGUNTAS DE EXEMPLO</div>
-                {SAMPLE_QUESTIONS.map(q => (
-                  <a key={q} href={`${RAG_URL}?question=${encodeURIComponent(q)}`} target="_blank" rel="noopener noreferrer"
-                    style={{ display: 'block', padding: '10px 12px', marginBottom: '6px', background: 'rgba(0,102,255,0.05)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', color: 'var(--text-secondary)', fontSize: '13px', textDecoration: 'none', fontFamily: 'var(--font-body)' }}>
-                    {q}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {DOMAINS.map(d => (
+              <span key={d.name} style={{
+                display: 'flex', alignItems: 'center', gap: '5px', fontSize: '10px',
+                fontFamily: 'var(--font-mono)', color: d.color,
+                background: `${d.color}12`, border: `1px solid ${d.color}30`,
+                borderRadius: '4px', padding: '3px 9px',
+              }}>
+                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: d.color, display: 'inline-block' }} />
+                {d.name}
+              </span>
+            ))}
+          </div>
+          <MiniChat
+            systemPrompt={SYSTEM_PROMPT}
+            suggestions={SUGGESTIONS}
+            accentColor="var(--accent-blue)"
+            welcomeMsg={WELCOME}
+          />
         </div>
       </ModuleModal>
     </>

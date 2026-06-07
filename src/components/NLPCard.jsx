@@ -1,33 +1,38 @@
-// src/components/NLPCard.jsx
+// src/components/NLPCard.jsx — chat real via Groq com domínio LEED/AQUA-HQE
 import { useState } from 'react';
 import { Brain } from 'lucide-react';
 import SpaceCard from './SpaceCard';
 import ModuleModal from './ModuleModal';
+import MiniChat from './MiniChat';
 
-const METRICS = [
-  { label: 'BLEU-4',    value: 212, unit: '+%', color: 'var(--accent-cyan)' },
-  { label: 'ROUGE-L',   value: 75,  unit: '+%', color: 'var(--accent-green)' },
-  { label: 'BERTScore', value: 9,   unit: '+%', color: 'var(--accent-purple)' },
+const SYSTEM_PROMPT = `Você é um assistente especializado em edificações sustentáveis e certificações ambientais, simulando o modelo Llama 3.2 3B fine-tuned com QLoRA sobre corpus de certificações LEED e AQUA-HQE.
+
+Seus domínios:
+- **LEED** (Leadership in Energy and Environmental Design): sistema americano de certificação verde, categorias (BD+C, ID+C, O+M), pontuação Certified/Silver/Gold/Platinum
+- **AQUA-HQE**: adaptação brasileira do referencial francês, 14 categorias de qualidade ambiental, foco em clima tropical
+- **Eficiência energética**: sistemas AVAC, automação predial, energia solar, certificação PROCEL Edifica
+- **Materiais sustentáveis**: ciclo de vida, baixo carbono incorporado, reciclagem e reaproveitamento
+- **Qualidade ambiental interna**: conforto térmico, acústico, iluminação natural, qualidade do ar
+
+Responda SEMPRE em português brasileiro. Use ** ** para termos técnicos importantes. Máximo 3 parágrafos. Seja preciso com normas e percentuais reais.`;
+
+const SUGGESTIONS = [
+  'O que é certificação LEED?',
+  'Diferença entre LEED e AQUA-HQE?',
+  'Como reduzir consumo energético em 50%?',
+  'O que é carbono incorporado?',
 ];
 
-const EXAMPLES = [
-  {
-    q: 'O que é certificação LEED?',
-    a: 'LEED (Leadership in Energy and Environmental Design) é um sistema de certificação de edificações sustentáveis desenvolvido pelo U.S. Green Building Council, que avalia eficiência energética, uso de água, qualidade do ar interno e sustentabilidade dos materiais.',
-  },
-  {
-    q: 'Qual a diferença entre LEED e AQUA-HQE?',
-    a: 'AQUA-HQE é a adaptação brasileira do referencial francês HQE, com 14 categorias de qualidade ambiental e maior foco em conforto térmico e acústico adaptados ao clima tropical. LEED é mais voltado à eficiência energética e amplamente reconhecido internacionalmente.',
-  },
-  {
-    q: 'Como edifícios verdes reduzem emissões de carbono?',
-    a: 'Através de painéis solares, sistemas de recuperação de calor, materiais de baixo carbono incorporado, automação predial para otimizar consumo e estratégias passivas como orientação solar e ventilação natural, reduzindo emissões operacionais em até 50% vs construção convencional.',
-  },
+const WELCOME = `Olá! Sou o assistente de **Edifícios Verdes**, especializado em certificações LEED e AQUA-HQE. 🏢🌿\n\nPosso responder sobre eficiência energética, materiais sustentáveis, conforto ambiental e processos de certificação.\n\nFine-tuned com QLoRA: BLEU-4 +212% · ROUGE-L +75% · BERTScore +9%`;
+
+const METRICS = [
+  { label: 'BLEU-4',    value: 212, color: 'var(--accent-cyan)' },
+  { label: 'ROUGE-L',   value: 75,  color: 'var(--accent-green)' },
+  { label: 'BERTScore', value: 9,   color: 'var(--accent-purple)' },
 ];
 
 export default function NLPCard() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [expandedEx, setExpandedEx] = useState(null);
 
   return (
     <>
@@ -40,56 +45,42 @@ export default function NLPCard() {
             <div key={m.label}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', marginBottom: '4px' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>{m.label}</span>
-                <span style={{ color: m.color, fontWeight: 700 }}>{m.value}{m.unit}</span>
+                <span style={{ color: m.color, fontWeight: 700 }}>+{m.value}%</span>
               </div>
               <div style={{ height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '99px', overflow: 'hidden' }}>
                 <div style={{ width: `${Math.min(100, m.value)}%`, height: '100%', background: m.color, borderRadius: '99px' }} />
               </div>
             </div>
           ))}
-          <button
-            style={{
-              marginTop: '4px', background: 'rgba(0,255,136,0.05)', border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-sm)', padding: '6px 12px', color: 'var(--accent-green)',
-              fontFamily: 'var(--font-mono)', fontSize: '10px', cursor: 'pointer', letterSpacing: '1px',
-            }}
-            onClick={() => setModalOpen(true)}
-          >
-            VER EXEMPLOS
+          <button onClick={() => setModalOpen(true)} style={{
+            marginTop: '4px', background: 'rgba(0,255,136,0.05)', border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-sm)', padding: '6px 12px', color: 'var(--accent-green)',
+            fontFamily: 'var(--font-mono)', fontSize: '10px', cursor: 'pointer', letterSpacing: '1px',
+          }}>
+            TESTAR MODELO
           </button>
         </div>
       </SpaceCard>
 
-      <ModuleModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="NLP — Edifícios Verdes Fine-Tuning">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', lineHeight: 1.8 }}>
-            Llama 3.2 3B fine-tuned com QLoRA · Corpus: certificações LEED/AQUA-HQE · Interface Gradio
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+      <ModuleModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="NLP — Edifícios Verdes (Fine-Tuned LLaMA 3.2)">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
             {METRICS.map(m => (
-              <div key={m.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', padding: '14px', textAlign: 'center' }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '28px', fontWeight: 900, color: m.color }}>{m.value}{m.unit}</div>
+              <div key={m.label} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', padding: '12px', textAlign: 'center' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 900, color: m.color }}>+{m.value}%</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)', marginTop: '4px' }}>{m.label}</div>
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ fontSize: '11px', color: 'var(--accent-cyan)', fontFamily: 'var(--font-display)', letterSpacing: '1px' }}>EXEMPLOS DO MODELO</div>
-            {EXAMPLES.map((ex, i) => (
-              <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)', padding: '14px', cursor: 'pointer' }}
-                onClick={() => setExpandedEx(expandedEx === i ? null : i)}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                  <span style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.4 }}>❓ {ex.q}</span>
-                  <span style={{ color: 'var(--accent-cyan)', fontSize: '16px', flexShrink: 0 }}>{expandedEx === i ? '▲' : '▼'}</span>
-                </div>
-                {expandedEx === i && (
-                  <div style={{ marginTop: '10px', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6, borderTop: '1px solid var(--border-subtle)', paddingTop: '10px' }}>
-                    💬 {ex.a}
-                  </div>
-                )}
-              </div>
-            ))}
+          <div style={{ fontSize: '11px', color: 'var(--accent-green)', fontFamily: 'var(--font-display)', letterSpacing: '1px' }}>
+            CONVERSE COM O MODELO
           </div>
+          <MiniChat
+            systemPrompt={SYSTEM_PROMPT}
+            suggestions={SUGGESTIONS}
+            accentColor="var(--accent-green)"
+            welcomeMsg={WELCOME}
+          />
         </div>
       </ModuleModal>
     </>
