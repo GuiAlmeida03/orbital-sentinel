@@ -16,7 +16,6 @@ export default function Header({ activeSection, onNavigate }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'sentinel',  label: 'Sentinel' },
-    { id: 'monitor',   label: 'Monitor' },
     { id: 'assistant', label: 'Astra AI' },
   ];
 

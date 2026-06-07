@@ -45,7 +45,7 @@ export default function SentinelHub({ onContextUpdate }) {
             </div>
             <h2 style={styles.sectionTitle}>Orbital Sentinel Hub</h2>
           </div>
-          <p style={styles.sectionSub}>Centro de controle integrado — 8 módulos da Global Solution unificados</p>
+          <p style={styles.sectionSub}>Centro de controle integrado — 7 módulos da Global Solution</p>
         </div>
         <div style={styles.liveTag}>
           <span style={styles.liveDot} />
@@ -61,7 +61,6 @@ export default function SentinelHub({ onContextUpdate }) {
         <NLPCard />
         <LaunchWindowCard onStatusChange={handleLaunch} />
         <EnergyAnalyzer />
-        <AstraContextCard iotCtx={iotCtx} satCtx={satCtx} launchCtx={launchCtx} fireCtx={fireCtx} />
       </div>
     </div>
   );

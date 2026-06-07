@@ -2,7 +2,6 @@
 import { useState, useCallback } from 'react';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
-import Monitor from './components/Monitor';
 import ChatBot from './components/ChatBot';
 import SentinelHub from './components/SentinelHub';
 import Footer from './components/Footer';
@@ -25,7 +24,6 @@ export default function App() {
     switch (activeSection) {
       case 'dashboard': return <Dashboard />;
       case 'sentinel':  return <SentinelHub onContextUpdate={handleContextUpdate} />;
-      case 'monitor':   return <Monitor />;
       case 'assistant': return <ChatBot sentinelContext={sentinelContext} />;
       default:          return <Dashboard />;
     }
