@@ -7,6 +7,8 @@ import FireRiskMap from './FireRiskMap';
 import NLPCard from './NLPCard';
 import LaunchWindowCard from './LaunchWindowCard';
 import EnergyAnalyzer from './EnergyAnalyzer';
+import AsteroidsCard from './AsteroidsCard';
+import APODCard from './APODCard';
 
 export default function SentinelHub() {
 
@@ -20,7 +22,7 @@ export default function SentinelHub() {
             </div>
             <h2 style={styles.sectionTitle}>Orbital Sentinel Hub</h2>
           </div>
-          <p style={styles.sectionSub}>Centro de controle integrado — 7 módulos da Global Solution</p>
+          <p style={styles.sectionSub}>Centro de controle integrado — Global Solution + NASA Open API</p>
         </div>
         <div style={styles.liveTag}>
           <span style={styles.liveDot} />
@@ -36,6 +38,8 @@ export default function SentinelHub() {
         <NLPCard />
         <LaunchWindowCard />
         <EnergyAnalyzer />
+        <AsteroidsCard />
+        <APODCard />
       </div>
     </div>
   );
