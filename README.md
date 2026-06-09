@@ -23,7 +23,7 @@ O Orbital Sentinel centraliza tudo em tempo real numa interface única.
 | Card | Disciplina | O que faz |
 |---|---|---|
 | **IoT Espaço Sentinela** | IoT | 7 sensores ESP32 simulados (temp, umidade, pressão, vibração, gás, radiação, distância) classificados em GO/CAUTION/HOLD/SCRUB em tempo real |
-| **Space RAG** | Cognitive Computing | Chat com LLaMA 3.3 70B especializado em 5 domínios: NASA Artemis, ESA Copernicus, INPE Queimadas, Starlink, EMBRAPA Geo |
+| **Space RAG** | Generative AI | Chat com LLaMA 3.3 70B especializado em 5 domínios: NASA Artemis, ESA Copernicus, INPE Queimadas, Starlink, EMBRAPA Geo |
 | **Telemetria de Satélites** | QML / Machine Learning | Classificador SVM de telemetria de 5 satélites reais (ISS, Hubble, Webb, Starlink-42, GPS-IIF) em Normal / Alerta / Falha Iminente |
 | **Mapa de Risco de Incêndio** | Visão Computacional | Mapa SVG do Brasil com 6 biomas coloridos por nível de risco, baseado nos resultados do EfficientNetB0 (AUC-ROC 0.9987) |
 | **NLP Fine-Tuning** | NLP | Chat sobre certificações LEED/AQUA-HQE simulando o Llama 3.2 3B fine-tuned com QLoRA (BLEU-4 +212%) |
